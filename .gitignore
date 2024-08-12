@@ -1,0 +1,8 @@
+.DS_Store
+/Library/
+/Logs/
+/obj/
+/.vs/
+/Temp/
+/*.csproj
+/Assets/StreamingAssets/undreamai-v1.1.6-llamacpp/
