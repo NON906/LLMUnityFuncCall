@@ -26,4 +26,14 @@ namespace LLMUnityFuncCall
     class SchemaRequiredAttribute : Attribute
     {
     }
+
+    [AttributeUsage(AttributeTargets.Method)]
+    class SchemaNameAttribute : Attribute
+    {
+        public string Name;
+        public SchemaNameAttribute(string name)
+        {
+            Name = name;
+        }
+    }
 }

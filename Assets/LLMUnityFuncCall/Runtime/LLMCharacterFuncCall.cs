@@ -75,8 +75,13 @@ namespace LLMUnityFuncCall
                 Tool newTool = new Tool();
                 newTool.target = Tools.GetPersistentTarget(toolsIndex);
                 newTool.originalName = Tools.GetPersistentMethodName(toolsIndex);
-                newTool.name = newTool.originalName;
                 newTool.method = newTool.target.GetType().GetMethod(newTool.originalName);
+                var attrs = (SchemaNameAttribute[])newTool.method.GetCustomAttributes(typeof(SchemaNameAttribute), true);
+                if (attrs.Length > 0)
+                {
+                    newTool.originalName = attrs[0].Name;
+                }
+                newTool.name = newTool.originalName;
 
                 tools_.Add(newTool);
             }
@@ -133,6 +138,11 @@ namespace LLMUnityFuncCall
             newTool.delegateFunc = tool;
             newTool.method = tool.Method;
             newTool.originalName = tool.Method.Name;
+            var attrs = (SchemaNameAttribute[])newTool.method.GetCustomAttributes(typeof(SchemaNameAttribute), true);
+            if (attrs.Length > 0)
+            {
+                newTool.originalName = attrs[0].Name;
+            }
             newTool.name = newTool.originalName;
 
             tools_.Add(newTool);
