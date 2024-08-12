@@ -223,7 +223,15 @@ namespace LLMUnityFuncCall
             {
                 schemaData += "'" + member.Name + "': ";
 
-                schemaData += generateTypeSchemaData(member.FieldType) + "}";
+                schemaData += generateTypeSchemaData(member.FieldType);
+                var attrs = (SchemaDescriptionAttribute[])member.GetCustomAttributes(typeof(SchemaDescriptionAttribute));
+                if (attrs.Length > 0)
+                {
+                    schemaData = schemaData.Remove(schemaData.Length - 1);
+                    schemaData += ", 'description': '" + attrs[0].Content + "'}";
+                }
+                schemaData += "}";
+
                 if (member != members[members.Length - 1])
                 {
                     schemaData += ", ";

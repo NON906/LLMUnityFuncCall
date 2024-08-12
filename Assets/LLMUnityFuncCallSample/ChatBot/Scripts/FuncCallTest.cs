@@ -11,6 +11,7 @@ namespace LLMUnityFuncCall.Sample
         class GetCurrentStockPriceParameters
         {
             [SchemaRequired]
+            [SchemaDescription("The stock symbol.")]
             public string symbol;
         }
 
