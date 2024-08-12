@@ -3,6 +3,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Unity.VisualScripting;
@@ -21,6 +22,29 @@ namespace LLMUnityFuncCall
 
     public class LLMCharacterFuncCall : LLMCharacter
     {
+        public delegate void ToolFunc(FuncCallData data);
+
+        class Tool
+        {
+            public string name;
+            public string originalName;
+            public MethodInfo method;
+            public UnityEngine.Object target = null;
+            public ToolFunc delegateFunc = null;
+
+            public void Call(FuncCallData data)
+            {
+                if (delegateFunc != null)
+                {
+                    delegateFunc.Invoke(data);
+                }
+                else if (target != null)
+                {
+                    method.Invoke(target, new[] { data });
+                }
+            }
+        }
+
         [Serializable]
         class FuncCallBase
         {
@@ -30,9 +54,100 @@ namespace LLMUnityFuncCall
         const string SYSTEM_TEMPLATE_BEFORE = "You are a function calling AI model. You are provided with function signatures within <tools></tools> XML tags. You may call one or more functions to assist with the user query. Don't make assumptions about what values to plug into functions. Here are the available tools: <tools> ";
         const string SYSTEM_TEMPLATE_AFTER = " </tools> Use the following pydantic model json schema for each tool call you will make: {\"properties\": {\"arguments\": {\"title\": \"Arguments\", \"type\": \"object\"}, \"name\": {\"title\": \"Name\", \"type\": \"string\"}}, \"required\": [\"arguments\", \"name\"], \"title\": \"FunctionCall\", \"type\": \"object\"} For each function call return a json object with function name and arguments within <tool_call></tool_call> XML tags as follows:\n<tool_call>\n{\"arguments\": <args-dict>, \"name\": <function-name>}\n</tool_call>";
 
-        [SerializeField] UnityEvent<FuncCallData> Tools;
+        [SerializeField]
+        UnityEvent<FuncCallData> Tools;
 
+        List<Tool> tools_ = null;
         bool isInsertedSystemMessage_ = false;
+
+        void initTools()
+        {
+            if (tools_ != null)
+            {
+                return;
+            }
+
+            tools_ = new List<Tool>();
+
+            int toolsCount = Tools.GetPersistentEventCount();
+            for (int toolsIndex = 0; toolsIndex < toolsCount; toolsIndex++)
+            {
+                Tool newTool = new Tool();
+                newTool.target = Tools.GetPersistentTarget(toolsIndex);
+                newTool.originalName = Tools.GetPersistentMethodName(toolsIndex);
+                newTool.name = newTool.originalName;
+                newTool.method = newTool.target.GetType().GetMethod(newTool.originalName);
+
+                tools_.Add(newTool);
+            }
+
+            refreshToolName();
+        }
+
+        string getFullName(Transform objTrans)
+        {
+            if (objTrans.parent == null)
+            {
+                return objTrans.gameObject.name;
+            }
+            return getFullName(objTrans.parent) + "/" + objTrans.gameObject.name;
+        }
+
+        void refreshToolName()
+        {
+            IEnumerable<Tool> tools = tools_;
+            
+            while (tools.Count() > 0)
+            {
+                var searchedTools = tools.Where(x => x.originalName == tools.First().originalName);
+                if (searchedTools.Count() > 1)
+                {
+                    int index = 0;
+                    foreach (var tool in searchedTools)
+                    {
+                        if (tool.target != null && tool.target is GameObject)
+                        {
+                            tool.name = getFullName(((GameObject)tool.target).transform) + "/" + tool.originalName;
+                        }
+                        else
+                        {
+                            tool.name = "/" + index + "/" + tool.originalName;
+                            index++;
+                        }
+                    }
+                }
+                else
+                {
+                    searchedTools.First().name = searchedTools.First().originalName;
+                }
+
+                tools = tools.Where(x => x.originalName != tools.First().originalName).ToList();
+            }
+        }
+
+        public void AddTool(ToolFunc tool)
+        {
+            initTools();
+
+            Tool newTool = new Tool();
+            newTool.delegateFunc = tool;
+            newTool.method = tool.Method;
+            newTool.originalName = tool.Method.Name;
+            newTool.name = newTool.originalName;
+
+            tools_.Add(newTool);
+
+            refreshToolName();
+        }
+
+        public void RemoveTool(ToolFunc tool)
+        {
+            initTools();
+
+            tools_ = tools_.Where(x => x.delegateFunc != tool).ToList();
+
+            refreshToolName();
+        }
 
         string generateRequired(Type type)
         {
@@ -122,13 +237,12 @@ namespace LLMUnityFuncCall
         {
             string allTools = "[";
 
-            int toolsCount = Tools.GetPersistentEventCount();
+            int toolsCount = tools_.Count;
             for (int toolsIndex = 0; toolsIndex < toolsCount; toolsIndex++)
             {
-                var targetObj = Tools.GetPersistentTarget(toolsIndex);
-                string name = Tools.GetPersistentMethodName(toolsIndex);
+                string name = tools_[toolsIndex].name;
 
-                var method = targetObj.GetType().GetMethod(name);
+                var method = tools_[toolsIndex].method;
                 var attrs = (SchemaDescriptionAttribute[])method.GetCustomAttributes(typeof(SchemaDescriptionAttribute), true);
                 string description = "";
                 if (attrs.Length > 0)
@@ -168,10 +282,10 @@ namespace LLMUnityFuncCall
 
             FuncCallData data = new FuncCallData();
 
-            int toolsCount = Tools.GetPersistentEventCount();
+            int toolsCount = tools_.Count;
             for (int toolsIndex = 0; toolsIndex < toolsCount; toolsIndex++)
             {
-                string name = Tools.GetPersistentMethodName(toolsIndex);
+                string name = tools_[toolsIndex].name;
                 if (name != funcName)
                 {
                     continue;
@@ -187,11 +301,10 @@ namespace LLMUnityFuncCall
 
                 data.argumentsJson = argumentsStr;
 
-                var targetObj = Tools.GetPersistentTarget(toolsIndex);
-                var method = targetObj.GetType().GetMethod(name);
+                var method = tools_[toolsIndex].method;
 
                 var argAttrs = (SchemaArgTypeAttribute[])method.GetCustomAttributes(typeof(SchemaArgTypeAttribute), true);
-                if (argAttrs.Length > 0 && argAttrs[0].ArgType != typeof(string))
+                if (argAttrs.Length > 0)
                 {
                     data.arguments = JsonUtility.FromJson(argumentsStr, argAttrs[0].ArgType);
                     if (data.arguments == null)
@@ -209,7 +322,7 @@ namespace LLMUnityFuncCall
                     data.arguments = null;
                 }
 
-                method.Invoke(targetObj, new[] { data });
+                tools_[toolsIndex].Call(data);
             }
 
             if (data.output.TrimStart()[0] != '{')
@@ -250,6 +363,8 @@ namespace LLMUnityFuncCall
                     }
                 }
             }
+
+            initTools();
 
             if (!isInsertedSystemMessage_ && chat[0].role == "system")
             {
