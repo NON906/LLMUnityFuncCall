@@ -132,6 +132,8 @@ namespace LLMUnityFuncCall
 
                 tools = tools.Where(x => x.originalName != tools.First().originalName).ToList();
             }
+
+            isInsertedSystemMessage_ = false;
         }
 
         public void AddTool(ToolFunc tool)
@@ -390,7 +392,12 @@ namespace LLMUnityFuncCall
 
             if (!isInsertedSystemMessage_ && chat[0].role == "system")
             {
-                chat[0] = new ChatMessage { role = "system", content = SYSTEM_TEMPLATE_BEFORE + buildToolsSchema() + SYSTEM_TEMPLATE_AFTER + "\n\n" + chat[0].content };
+                string content = chat[0].content;
+                if (chat[0].content.Contains(SYSTEM_TEMPLATE_AFTER + "\n\n"))
+                {
+                    content = chat[0].content.Split(SYSTEM_TEMPLATE_AFTER + "\n\n")[1];
+                }
+                chat[0] = new ChatMessage { role = "system", content = SYSTEM_TEMPLATE_BEFORE + buildToolsSchema() + SYSTEM_TEMPLATE_AFTER + "\n\n" + content };
                 isInsertedSystemMessage_ = true;
             }
 
