@@ -6,7 +6,6 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -252,7 +251,7 @@ namespace LLMUnityFuncCall
                 if (attrs.Length > 0)
                 {
                     schemaData = schemaData.Remove(schemaData.Length - 1);
-                    schemaData += ", 'description': '" + attrs[0].Content + "'}";
+                    schemaData += ", 'description': '" + attrs[0].GetEscapedContent() + "'}";
                 }
                 schemaData += "}";
 
@@ -279,7 +278,7 @@ namespace LLMUnityFuncCall
                 string description = "";
                 if (attrs.Length > 0)
                 {
-                    description = attrs[0].Content;
+                    description = attrs[0].GetEscapedContent();
                 }
 
                 string schemaData = "{";

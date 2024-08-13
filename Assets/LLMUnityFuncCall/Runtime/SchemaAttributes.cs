@@ -20,6 +20,11 @@ namespace LLMUnityFuncCall
     {
         public string Content;
         public SchemaDescriptionAttribute(string content) { Content = content; }
+        public string GetEscapedContent()
+        {
+            return Content.Replace("\\", "\\\\").Replace("\r", "\\r").Replace("\n", "\\n").Replace("'", "\\'").Replace("\"", "\\\"")
+                .Replace("\b", "\\b").Replace("\f", "\\f").Replace("\t", "\\t").Replace("/", "\\/");
+        }
     }
 
     [AttributeUsage(AttributeTargets.Field)]
