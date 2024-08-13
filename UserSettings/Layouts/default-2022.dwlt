@@ -19,7 +19,7 @@ MonoBehaviour:
     width: 1536
     height: 772.8
   m_ShowMode: 4
-  m_Title: Project
+  m_Title: Game
   m_RootView: {fileID: 6}
   m_MinSize: {x: 875, y: 300}
   m_MaxSize: {x: 10000, y: 10000}
@@ -271,8 +271,8 @@ MonoBehaviour:
     y: 0
     width: 766.4
     height: 436
-  m_MinSize: {x: 200, y: 200}
-  m_MaxSize: {x: 4000, y: 4000}
+  m_MinSize: {x: 202, y: 221}
+  m_MaxSize: {x: 4002, y: 4021}
   m_ActualView: {fileID: 17}
   m_Panes:
   - {fileID: 17}
@@ -394,7 +394,7 @@ MonoBehaviour:
     m_SkipHidden: 0
     m_SearchArea: 1
     m_Folders:
-    - Assets/LLMUnityFuncCall/Runtime
+    - Assets/LLMUnityFuncCall/Editor
     m_Globs: []
     m_OriginalText: 
     m_ImportLogFlags: 0
@@ -402,15 +402,15 @@ MonoBehaviour:
   m_ViewMode: 1
   m_StartGridSize: 64
   m_LastFolders:
-  - Assets/LLMUnityFuncCall/Runtime
+  - Assets/LLMUnityFuncCall/Editor
   m_LastFoldersGridSize: -1
   m_LastProjectPath: D:\Unity\LLMUnityFuncCall\Projects\LLMUnityFuncCall
   m_LockTracker:
     m_IsLocked: 0
   m_FolderTreeState:
     scrollPos: {x: 0, y: 74.20001}
-    m_SelectedIDs: a05f0000
-    m_LastClickedID: 24480
+    m_SelectedIDs: 9e5f0000
+    m_LastClickedID: 24478
     m_ExpandedIDs: 00000000785f00007a5f00007c5f00007e5f0000805f0000825f0000845f0000865f0000885f000000ca9a3bffffff7f
     m_RenameOverlay:
       m_UserAcceptedRename: 0
@@ -579,8 +579,8 @@ MonoBehaviour:
   m_SceneHierarchy:
     m_TreeViewState:
       scrollPos: {x: 0, y: 0}
-      m_SelectedIDs: c81c0000
-      m_LastClickedID: 0
+      m_SelectedIDs: 3a5f0000
+      m_LastClickedID: 24378
       m_ExpandedIDs: 2efbffff
       m_RenameOverlay:
         m_UserAcceptedRename: 0

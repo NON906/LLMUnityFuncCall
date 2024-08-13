@@ -24,6 +24,7 @@ namespace LLMUnityFuncCall
 
             Space();
             EditorGUILayout.LabelField("Func Call Settings", EditorStyles.boldLabel);
+            llmScript.maxIterations = EditorGUILayout.IntField("Max Iterations", llmScript.maxIterations);
             EditorGUILayout.PropertyField(llmScriptSO.FindProperty("Tools"));
 
             OnInspectorGUIEnd(llmScriptSO);

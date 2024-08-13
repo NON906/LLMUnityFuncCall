@@ -54,6 +54,8 @@ namespace LLMUnityFuncCall
         const string SYSTEM_TEMPLATE_BEFORE = "You are a function calling AI model. You are provided with function signatures within <tools></tools> XML tags. You may call one or more functions to assist with the user query. Don't make assumptions about what values to plug into functions. Here are the available tools: <tools> ";
         const string SYSTEM_TEMPLATE_AFTER = " </tools> Use the following pydantic model json schema for each tool call you will make: {\"properties\": {\"arguments\": {\"title\": \"Arguments\", \"type\": \"object\"}, \"name\": {\"title\": \"Name\", \"type\": \"string\"}}, \"required\": [\"arguments\", \"name\"], \"title\": \"FunctionCall\", \"type\": \"object\"} For each function call return a json object with function name and arguments within <tool_call></tool_call> XML tags as follows:\n<tool_call>\n{\"arguments\": <args-dict>, \"name\": <function-name>}\n</tool_call>";
 
+        public int maxIterations = 10;
+
         [SerializeField]
         UnityEvent<FuncCallData> Tools;
 
@@ -401,6 +403,7 @@ namespace LLMUnityFuncCall
             int startChatCount = chat.Count;
 
             bool isFinish = false;
+            int callCount = 0;
             string chatResult = await Chat(query, ignoreFuncCallCallback, null, true);
             do
             {
@@ -410,11 +413,30 @@ namespace LLMUnityFuncCall
                     string toolCallResult = toolCall(toolCallJson);
                     AddMessage("tool", toolCallResult);
 
+                    callCount++;
+
+                    string prevContent = chat[0].content;
+                    if (callCount >= maxIterations && maxIterations > 0)
+                    {
+                        if (chat[0].role == "system")
+                        {
+                            string content = chat[0].content.Split(SYSTEM_TEMPLATE_AFTER + "\n\n")[1];
+                            chat[0] = new ChatMessage { role = "system", content = content };
+                        }
+                    }
+
                     string prompt = new ChatMLTemplate().ComputePrompt(chat, AIName);
                     chatResult = await Complete(prompt, ignoreFuncCallCallback);
                     if (chatResult != null)
                     {
                         AddAIMessage(chatResult);
+                    }
+
+                    if (callCount >= maxIterations && maxIterations > 0)
+                    {
+                        chat[0] = new ChatMessage { role = "system", content = prevContent };
+
+                        isFinish = true;
                     }
                 }
                 else
