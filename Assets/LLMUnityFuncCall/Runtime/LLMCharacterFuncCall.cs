@@ -134,6 +134,11 @@ namespace LLMUnityFuncCall
 
         public void AddTool(ToolFunc tool)
         {
+            if (tool == null)
+            {
+                return;
+            }
+
             initTools();
 
             Tool newTool = new Tool();
@@ -154,6 +159,11 @@ namespace LLMUnityFuncCall
 
         public void RemoveTool(ToolFunc tool)
         {
+            if (tool == null)
+            {
+                return;
+            }
+
             initTools();
 
             tools_ = tools_.Where(x => x.delegateFunc != tool).ToList();
