@@ -364,11 +364,9 @@ namespace LLMUnityFuncCall
                 string trimedInput = input.TrimStart();
 
                 bool notToolCall = true;
-                bool checkToolCall = false;
                 if (trimedInput.Contains("<tool_call>"))
                 {
                     notToolCall = false;
-                    checkToolCall = true;
                 }
                 if ("<tool_call>".Contains(trimedInput))
                 {
@@ -378,13 +376,6 @@ namespace LLMUnityFuncCall
                 if (notToolCall)
                 {
                     callback(input);
-                }
-                else if (checkToolCall)
-                {
-                    if (input.Contains("</tool_call>"))
-                    {
-                        CancelRequests();
-                    }
                 }
             }
 

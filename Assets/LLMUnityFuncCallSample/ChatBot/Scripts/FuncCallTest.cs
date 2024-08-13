@@ -22,5 +22,13 @@ namespace LLMUnityFuncCall.Sample
             var castedArg = data.arguments as GetCurrentStockPriceParameters;
             data.output = "{'price': 200.0}";
         }
+
+        /*
+        void Start()
+        {
+            var llmChara = FindObjectOfType<LLMCharacterFuncCall>();
+            llmChara.AddTool(get_current_stock_price);
+        }
+        */
     }
 }
