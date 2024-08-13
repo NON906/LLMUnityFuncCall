@@ -110,13 +110,9 @@ namespace LLMUnityFuncCall
                     int index = 0;
                     foreach (var tool in searchedTools)
                     {
-                        if (tool.target != null && tool.target is GameObject)
+                        if (tool.target != null && tool.target is Component)
                         {
-                            tool.name = getFullName(((GameObject)tool.target).transform) + "/" + tool.originalName;
-                        }
-                        else if (tool.target != null && tool.target is Component)
-                        {
-                            tool.name = getFullName(((Component)tool.target).transform) + "/" + tool.originalName;
+                            tool.name = getFullName(((Component)tool.target).transform) + "/" + tool.target.GetType().Name + "." + tool.originalName;
                         }
                         else
                         {
