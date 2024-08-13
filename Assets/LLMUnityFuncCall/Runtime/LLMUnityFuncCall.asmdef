@@ -1,0 +1,16 @@
+{
+    "name": "LLMUnityFuncCall",
+    "rootNamespace": "",
+    "references": [
+        "GUID:cf7c06d97d9c3b7db881733f839f5ae3"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

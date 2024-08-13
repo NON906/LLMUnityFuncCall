@@ -6,7 +6,7 @@ using UnityEngine;
 namespace LLMUnityFuncCall
 {
     [AttributeUsage(AttributeTargets.Method)]
-    class SchemaArgTypeAttribute : Attribute
+    public class SchemaArgTypeAttribute : Attribute
     {
         public Type ArgType;
         public SchemaArgTypeAttribute(Type argType)
@@ -16,19 +16,19 @@ namespace LLMUnityFuncCall
     }
 
     [AttributeUsage(AttributeTargets.Method | AttributeTargets.Field)]
-    class SchemaDescriptionAttribute : Attribute
+    public class SchemaDescriptionAttribute : Attribute
     {
         public string Content;
         public SchemaDescriptionAttribute(string content) { Content = content; }
     }
 
     [AttributeUsage(AttributeTargets.Field)]
-    class SchemaRequiredAttribute : Attribute
+    public class SchemaRequiredAttribute : Attribute
     {
     }
 
     [AttributeUsage(AttributeTargets.Method)]
-    class SchemaNameAttribute : Attribute
+    public class SchemaNameAttribute : Attribute
     {
         public string Name;
         public SchemaNameAttribute(string name)

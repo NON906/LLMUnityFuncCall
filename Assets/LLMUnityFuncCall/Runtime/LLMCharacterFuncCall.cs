@@ -211,7 +211,15 @@ namespace LLMUnityFuncCall
                 schemaData += generateTypeSchemaData(memberType.GetElementType());
                 schemaData += "}";
             }
-            else if (memberType.IsStruct() || memberType.IsClass)
+            else if (memberType.IsPrimitive)
+            {
+                schemaData += "{'type': 'number'}";
+            }
+            else if (memberType.IsEnum)
+            {
+                schemaData += "{'type': 'string'}"; // preliminary
+            }
+            else
             {
                 schemaData += "{'type': 'object', 'properties': ";
                 schemaData += generateObjectSchemaData(memberType);
@@ -225,14 +233,6 @@ namespace LLMUnityFuncCall
                 {
                     schemaData += ", 'required': " + required + "}";
                 }
-            }
-            else if (memberType.IsValueType)
-            {
-                schemaData += "{'type': 'number'}";
-            }
-            else
-            {
-                Debug.LogError("Unknown Type.");
             }
 
             return schemaData;

@@ -1,0 +1,18 @@
+{
+    "name": "LLMUnityFuncCallEditor",
+    "rootNamespace": "",
+    "references": [
+        "GUID:c864cd2730c997681836ab7f5f8081d0",
+        "GUID:cf7c06d97d9c3b7db881733f839f5ae3",
+        "GUID:f6e8824925c1aaf45859dab330a27b1f"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

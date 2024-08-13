@@ -1,0 +1,11 @@
+{
+    "name": "io.github.non906.llmunityfunccall",
+    "version": "0.1",
+    "description": "",
+    "displayName": "llmUnityFuncCall",
+    "unity": "2022.3",
+    "author": {
+        "name": "NON906",
+        "email": "mumeigames@gmail.com"
+    }
+}
