@@ -7,5 +7,12 @@
     "author": {
         "name": "NON906",
         "email": "mumeigames@gmail.com"
-    }
+    },
+    "samples": [
+        {
+            "displayName": "SimpleChat",
+            "description": "Simple Chat Samples.",
+            "path": "../LLMUnityFuncCallSamples/SimpleChat"
+        }
+    ],
 }
