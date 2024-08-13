@@ -114,6 +114,10 @@ namespace LLMUnityFuncCall
                         {
                             tool.name = getFullName(((GameObject)tool.target).transform) + "/" + tool.originalName;
                         }
+                        else if (tool.target != null && tool.target is Component)
+                        {
+                            tool.name = getFullName(((Component)tool.target).transform) + "/" + tool.originalName;
+                        }
                         else
                         {
                             tool.name = "/" + index + "/" + tool.originalName;
