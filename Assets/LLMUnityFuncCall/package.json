@@ -12,7 +12,7 @@
         {
             "displayName": "SimpleChat",
             "description": "Simple Chat Samples.",
-            "path": "../LLMUnityFuncCallSamples/SimpleChat"
+            "path": "Samples~/SimpleChat"
         }
     ],
     "changelogUrl": "https://github.com/NON906/LLMUnityFuncCall/releases",
