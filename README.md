@@ -9,7 +9,7 @@ This is assets for using Function Calling (like Agent) with [NousResearch/Hermes
 Add the following git repositories (LLM for Unity and this repositories) using the "+" button in Package Manager.
 
 - ``https://github.com/undreamai/LLMUnity.git``
-- ``https://github.com/NON906/LLMUnity.git?path=Assets/LLMUnityFuncCall``
+- ``https://github.com/NON906/LLMUnityFuncCall.git?path=Assets/LLMUnityFuncCall``
 
 This repository only supports the model Hermes-2-Pro-Llama-3-8B-GGUF and the chat template chatml.  
 Please configure the following in the LLM component inspector.

@@ -7,7 +7,7 @@
 Package Managerの「+」ボタンで以下のgitリポジトリ（LLM for Unityとこのリポジトリ）を追加してください。
 
 - ``https://github.com/undreamai/LLMUnity.git``
-- ``https://github.com/NON906/LLMUnity.git?path=Assets/LLMUnityFuncCall``
+- ``https://github.com/NON906/LLMUnityFuncCall.git?path=Assets/LLMUnityFuncCall``
 
 また、このリポジトリはモデルはHermes-2-Pro-Llama-3-8B-GGUF、Chat templateはchatmlのみ対応しています。  
 LLMコンポーネントのインスペクターで以下のように設定してください。
