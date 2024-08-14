@@ -1,6 +1,6 @@
 {
     "name": "io.github.non906.llmunityfunccall",
-    "version": "0.1",
+    "version": "0.0.1",
     "description": "This is assets for using Function Calling (like Agent) in LLM for Unity.",
     "displayName": "LLMUnityFuncCall",
     "unity": "2022.3",
