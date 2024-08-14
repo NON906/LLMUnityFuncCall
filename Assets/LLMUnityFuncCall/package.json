@@ -1,8 +1,8 @@
 {
     "name": "io.github.non906.llmunityfunccall",
     "version": "0.1",
-    "description": "",
-    "displayName": "llmUnityFuncCall",
+    "description": "This is assets for using Function Calling (like Agent) in LLM for Unity.",
+    "displayName": "LLMUnityFuncCall",
     "unity": "2022.3",
     "author": {
         "name": "NON906",
@@ -14,5 +14,8 @@
             "description": "Simple Chat Samples.",
             "path": "../LLMUnityFuncCallSamples/SimpleChat"
         }
-    ]
+    ],
+    "changelogUrl": "https://github.com/NON906/LLMUnityFuncCall/releases",
+    "documentationUrl": "https://github.com/NON906/LLMUnityFuncCall/blob/main/README.md",
+    "licensesUrl": "https://github.com/NON906/LLMUnityFuncCall/blob/main/LICENSE"
 }
