@@ -406,7 +406,7 @@ namespace LLMUnityFuncCall
             string chatResult = await Chat(query, ignoreFuncCallCallback, null, true);
             do
             {
-                if (chatResult.Contains("<tool_call>") && chatResult.Contains("</tool_call>"))
+                if (chatResult != null && chatResult.Contains("<tool_call>") && chatResult.Contains("</tool_call>"))
                 {
                     string toolCallJson = chatResult.Split("<tool_call>")[1].Split("</tool_call>")[0];
                     string toolCallResult = toolCall(toolCallJson);
