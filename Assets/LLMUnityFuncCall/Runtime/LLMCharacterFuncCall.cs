@@ -61,6 +61,13 @@ namespace LLMUnityFuncCall
         List<Tool> tools_ = null;
         bool isInsertedSystemMessage_ = false;
 
+        public int GetToolsCount()
+        {
+            initTools();
+
+            return tools_.Count;
+        }
+
         void initTools()
         {
             if (tools_ != null)
@@ -307,7 +314,7 @@ namespace LLMUnityFuncCall
             return allTools;
         }
 
-        string toolCall(string funcCall)
+        async Task<string> toolCall(string funcCall)
         {
             string funcName = JsonUtility.FromJson<FuncCallBase>(funcCall)?.name;
 
@@ -356,6 +363,10 @@ namespace LLMUnityFuncCall
                 tools_[toolsIndex].Call(data);
             }
 
+            while (data.output == null)
+            {
+                await Task.Yield();
+            }
             if (data.output.TrimStart()[0] != '{')
             {
                 data.output = "\"" + data.output + "\"";
@@ -380,7 +391,7 @@ namespace LLMUnityFuncCall
                     notToolCall = false;
                 }
 
-                if (notToolCall)
+                if (notToolCall && callback != null)
                 {
                     callback(input);
                 }
@@ -409,7 +420,7 @@ namespace LLMUnityFuncCall
                 if (chatResult != null && chatResult.Contains("<tool_call>") && chatResult.Contains("</tool_call>"))
                 {
                     string toolCallJson = chatResult.Split("<tool_call>")[1].Split("</tool_call>")[0];
-                    string toolCallResult = toolCall(toolCallJson);
+                    string toolCallResult = await toolCall(toolCallJson);
                     AddMessage("tool", toolCallResult);
 
                     callCount++;
