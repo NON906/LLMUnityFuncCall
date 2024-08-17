@@ -179,98 +179,6 @@ namespace LLMUnityFuncCall
             refreshToolName();
         }
 
-        string generateRequired(Type type)
-        {
-            var members = type.GetFields();
-            string ret = "[";
-            foreach (var member in members)
-            {
-                var reqAttrs = (SchemaRequiredAttribute[])member.GetCustomAttributes(typeof(SchemaRequiredAttribute), true);
-                if (reqAttrs.Length > 0)
-                {
-                    if (ret != "[")
-                    {
-                        ret += ", ";
-                    }
-                    ret += "'" + member.Name + "'";
-                }
-            }
-            ret += "]";
-            return ret;
-        }
-
-        string generateTypeSchemaData(Type memberType)
-        {
-            string schemaData = "";
-
-            if (memberType == typeof(bool))
-            {
-                schemaData += "{'type': 'boolean'}";
-            }
-            else if (memberType == typeof(string))
-            {
-                schemaData += "{'type': 'string'}";
-            }
-            else if (memberType.IsArray || memberType.GetInterfaces().Any(t => t.IsConstructedGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>)))
-            {
-                schemaData += "{'type': 'array', 'items': ";
-                schemaData += generateTypeSchemaData(memberType.GetElementType());
-                schemaData += "}";
-            }
-            else if (memberType.IsPrimitive)
-            {
-                schemaData += "{'type': 'number'}";
-            }
-            else if (memberType.IsEnum)
-            {
-                schemaData += "{'type': 'string'}"; // preliminary
-            }
-            else
-            {
-                schemaData += "{'type': 'object', 'properties': ";
-                schemaData += generateObjectSchemaData(memberType);
-
-                string required = generateRequired(memberType);
-                if (required == "[]")
-                {
-                    schemaData += "}";
-                }
-                else
-                {
-                    schemaData += ", 'required': " + required + "}";
-                }
-            }
-
-            return schemaData;
-        }
-
-        string generateObjectSchemaData(Type membersType)
-        {
-            var members = membersType.GetFields();
-
-            string schemaData = "";
-            foreach (var member in members)
-            {
-                schemaData += "'" + member.Name + "': ";
-
-                schemaData += generateTypeSchemaData(member.FieldType);
-                var attrs = (SchemaDescriptionAttribute[])member.GetCustomAttributes(typeof(SchemaDescriptionAttribute));
-                if (attrs.Length > 0)
-                {
-                    schemaData = schemaData.Remove(schemaData.Length - 1);
-                    schemaData += ", 'description': '" + attrs[0].GetEscapedContent() + "'}";
-                }
-                schemaData += "}";
-
-                if (member != members[members.Length - 1])
-                {
-                    schemaData += ", ";
-                }
-            }
-
-            return schemaData;
-        }
-
         string buildToolsSchema()
         {
             string allTools = "[";
@@ -288,20 +196,11 @@ namespace LLMUnityFuncCall
                     description = attrs[0].GetEscapedContent();
                 }
 
-                string schemaData = "{";
                 var argAttrs = (SchemaArgTypeAttribute[])method.GetCustomAttributes(typeof(SchemaArgTypeAttribute), true);
 
-                string required = "[]";
-                if (argAttrs.Length > 0)
-                {
-                    schemaData += generateObjectSchemaData(argAttrs[0].ArgType);
+                var schemaData = SchemaBuilder.Build(argAttrs[0].ArgType);
 
-                    required = generateRequired(argAttrs[0].ArgType);
-                }
-
-                schemaData += "}";
-
-                allTools += "{'type': 'function', 'function': {'name': '" + name + "', 'description': '" + description + "', 'parameters': {'type': 'object', 'properties': " + schemaData + ", 'required': " + required + "}}";
+                allTools += "{'type': 'function', 'function': {'name': '" + name + "', 'description': '" + description + "', 'parameters': " + schemaData + "}";
 
                 if (toolsIndex < toolsCount - 1)
                 {
@@ -399,7 +298,7 @@ namespace LLMUnityFuncCall
 
             initTools();
 
-            if (!isInsertedSystemMessage_ && chat[0].role == "system")
+            if (!isInsertedSystemMessage_ && chat[0].role == "system" && tools_.Count > 0)
             {
                 string content = chat[0].content;
                 if (chat[0].content.Contains(SYSTEM_TEMPLATE_AFTER + "\n\n"))

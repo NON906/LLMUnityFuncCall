@@ -11,8 +11,13 @@
     "samples": [
         {
             "displayName": "SimpleChat",
-            "description": "Simple Chat Samples.",
+            "description": "Simple Chat Sample.",
             "path": "Samples~/SimpleChat"
+        },
+        {
+            "displayName": "Format",
+            "description": "Structured Outputs Sample.",
+            "path": "Samples~/Format"
         }
     ],
     "changelogUrl": "https://github.com/NON906/LLMUnityFuncCall/releases",
