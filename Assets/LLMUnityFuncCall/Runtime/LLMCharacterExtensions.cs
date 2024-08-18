@@ -163,9 +163,16 @@ namespace LLMUnityFuncCall
             }
 
             string rawResult = await llmChara.Chat(query, parseCallback, completionCallback, addToHistory);
+            if (rawResult == null)
+            {
+                return default;
+            }
 
-            parseOutClass(rawResult, out T targetT, out _);
-
+            if (parseOutClass(rawResult, out T targetT, out string target))
+            {
+                return targetT;
+            }
+            targetT = parseOutClassStream<T>(target);
             return targetT;
         }
 
@@ -191,7 +198,7 @@ namespace LLMUnityFuncCall
                 if (callback != null)
                 {
                     var targetT2 = parseOutClassStream<T>(target);
-                    if (targetT != null)
+                    if (targetT2 != null)
                     {
                         callback(targetT2);
                     }
@@ -209,8 +216,16 @@ namespace LLMUnityFuncCall
             }
 
             string rawResult = await llmChara.ChatWithFuncCall(query, parseCallback, completionCallback, addToHistory);
+            if (rawResult == null)
+            {
+                return default;
+            }
 
-            parseOutClass(rawResult, out T targetT, out _);
+            if (parseOutClass(rawResult, out T targetT, out string target))
+            {
+                return targetT;
+            }
+            targetT = parseOutClassStream<T>(target);
 
             return targetT;
         }
