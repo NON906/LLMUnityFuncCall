@@ -33,14 +33,14 @@ namespace LLMUnityFuncCall
                     try
                     {
                         targetT = JsonUtility.FromJson<T>(target);
+                        if (targetT != null)
+                        {
+                            return true;
+                        }
                     }
                     catch (ArgumentException)
                     {
                         targetT = default;
-                    }
-                    if (targetT != null)
-                    {
-                        return true;
                     }
                 }
 
@@ -67,15 +67,29 @@ namespace LLMUnityFuncCall
                 subTarget = target.Substring(lastObject + 1);
                 subLastTarget = target.Substring(0, lastObject + 1);
             }
-            else
+            else if (lastArray > lastObject && lastArray >= 0)
             {
                 subTarget = target.Substring(lastArray + 1);
                 subLastTarget = target.Substring(0, lastArray + 1);
             }
+            else
+            {
+                return default;
+            }
             while (true)
             {
                 lastArray = subLastTarget.LastIndexOf("[");
+                if (lastArray < subLastTarget.LastIndexOf("]"))
+                {
+                    subLastTarget = subLastTarget.Substring(0, lastArray);
+                    continue;
+                }
                 lastObject = subLastTarget.LastIndexOf("{");
+                if (lastObject < subLastTarget.LastIndexOf("}"))
+                {
+                    subLastTarget = subLastTarget.Substring(0, lastObject);
+                    continue;
+                }
                 int startArray = subTarget.IndexOf("]");
                 int startObject = subTarget.IndexOf("}");
                 if (startArray < 0 && startObject < 0)
@@ -85,7 +99,7 @@ namespace LLMUnityFuncCall
                         target += "}";
                         subLastTarget = subLastTarget.Substring(0, lastObject);
                     }
-                    else if (lastArray >= 0)
+                    else if (lastArray > lastObject && lastArray >= 0)
                     {
                         target += "]";
                         subLastTarget = subLastTarget.Substring(0, lastArray);
