@@ -12,6 +12,7 @@ namespace LLMUnityFuncCall
     {
         const string SYSTEM_TEMPLATE_BEFORE = "\n\nYou are a helpful assistant that answers in JSON. Here's the json schema you must adhere to:\n<schema>\n";
         const string SYSTEM_TEMPLATE_AFTER = "\n</schema>";
+        const string SYSTEM_TEMPLATE_EXAMPLE = "\nHere's an example of your output to:\n";
 
         static int countChar(string s, char c)
         {
@@ -137,10 +138,13 @@ namespace LLMUnityFuncCall
             return targetT;
         }
 
-        public static async Task<T> ChatFormat<T>(this LLMCharacter llmChara, string query, Callback<T> callback = null, EmptyCallback completionCallback = null, bool addToHistory = true)
+        public static async Task<T> ChatFormat<T>(this LLMCharacter llmChara, string query, Callback<T> callback = null, EmptyCallback completionCallback = null, bool addToHistory = true, T example = null)
+            where T : class
         {
             void parseCallback(string rawResult)
             {
+                Debug.Log(rawResult);
+
                 if (!rawResult.Contains("{"))
                 {
                     return;
@@ -173,7 +177,13 @@ namespace LLMUnityFuncCall
                 {
                     content = llmChara.chat[0].content.Split(SYSTEM_TEMPLATE_BEFORE)[0];
                 }
-                llmChara.chat[0] = new ChatMessage { role = "system", content = content + SYSTEM_TEMPLATE_BEFORE + SchemaBuilder.Build<T>() + SYSTEM_TEMPLATE_AFTER };
+                content += SYSTEM_TEMPLATE_BEFORE + SchemaBuilder.Build<T>() + SYSTEM_TEMPLATE_AFTER;
+                if (example != null)
+                {
+                    content += SYSTEM_TEMPLATE_EXAMPLE + JsonUtility.ToJson(example);
+                }
+
+                llmChara.chat[0] = new ChatMessage { role = "system", content = content };
             }
 
             string rawResult = await llmChara.Chat(query, parseCallback, completionCallback, addToHistory);
@@ -190,7 +200,8 @@ namespace LLMUnityFuncCall
             return targetT;
         }
 
-        public static async Task<T> ChatFormatWithFuncCall<T>(this LLMCharacterFuncCall llmChara, string query, Callback<T> callback = null, EmptyCallback completionCallback = null, bool addToHistory = true)
+        public static async Task<T> ChatFormatWithFuncCall<T>(this LLMCharacterFuncCall llmChara, string query, Callback<T> callback = null, EmptyCallback completionCallback = null, bool addToHistory = true, T example = null)
+            where T : class
         {
             void parseCallback(string rawResult)
             {
@@ -226,7 +237,13 @@ namespace LLMUnityFuncCall
                 {
                     content = llmChara.chat[0].content.Split(SYSTEM_TEMPLATE_BEFORE)[0];
                 }
-                llmChara.chat[0] = new ChatMessage { role = "system", content = content + SYSTEM_TEMPLATE_BEFORE + SchemaBuilder.Build<T>() + SYSTEM_TEMPLATE_AFTER };
+                content += SYSTEM_TEMPLATE_BEFORE + SchemaBuilder.Build<T>() + SYSTEM_TEMPLATE_AFTER;
+                if (example != null)
+                {
+                    content += SYSTEM_TEMPLATE_EXAMPLE + JsonUtility.ToJson(example);
+                }
+
+                llmChara.chat[0] = new ChatMessage { role = "system", content = content };
             }
 
             string rawResult = await llmChara.ChatWithFuncCall(query, parseCallback, completionCallback, addToHistory);
