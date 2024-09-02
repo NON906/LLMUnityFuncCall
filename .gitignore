@@ -5,6 +5,7 @@
 /.vs/
 /Temp/
 /*.csproj
-/Assets/StreamingAssets/undreamai-v1.1.6-llamacpp/
-/Assets/Plugins/Android/undreamai-v1.1.6-llamacpp/
-/Assets/Plugins/Android/undreamai-v1.1.6-llamacpp.meta
+/Assets/StreamingAssets/undreamai-v*-llamacpp/
+/Assets/StreamingAssets/undreamai-v*-llamacpp.meta
+/Assets/Plugins/Android/undreamai-v*-llamacpp/
+/Assets/Plugins/Android/undreamai-v*-llamacpp.meta

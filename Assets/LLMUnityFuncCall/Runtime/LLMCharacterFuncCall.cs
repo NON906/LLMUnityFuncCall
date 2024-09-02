@@ -334,7 +334,7 @@ namespace LLMUnityFuncCall
                         }
                     }
 
-                    string prompt = new ChatMLTemplate().ComputePrompt(chat, AIName);
+                    string prompt = new ChatMLTemplate().ComputePrompt(chat, playerName, AIName);
                     chatResult = await Complete(prompt, ignoreFuncCallCallback);
                     if (chatResult != null)
                     {
