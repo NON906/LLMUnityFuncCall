@@ -143,8 +143,6 @@ namespace LLMUnityFuncCall
         {
             void parseCallback(string rawResult)
             {
-                Debug.Log(rawResult);
-
                 if (!rawResult.Contains("{"))
                 {
                     return;
